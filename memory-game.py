@@ -9,12 +9,11 @@ BOARD_HEIGHT = 4
 BOARD_WIDTH = 4
 NB_PAIRS = (BOARD_HEIGHT * BOARD_WIDTH) // 2
 
-board = [[-1 for _ in range(BOARD_WIDTH)] for _ in range(BOARD_HEIGHT)]
-
-pairs = [i for i in range(NB_PAIRS)] * 2
-#print(pairs)
-
 # ---- Functions ----
+def create_board(width, height):
+    board = [[-1 for _ in range(width)] for _ in range(height)]
+    return board
+
 def fill_board(board, pairs):
     while not pairs == []:
         x = random.randint(0, BOARD_WIDTH-1)
@@ -25,19 +24,32 @@ def fill_board(board, pairs):
     
     return board
 
+def create_board_view(board):
+    root = Tk()
+    frm = ttk.Frame(root, padding=10)
+    frm.grid()
+
+    for i, line in enumerate(board):
+        for j, value in enumerate(line):
+            ttk.Button(frm, text=str(value)).grid(column=j, row=i)
+
+    ttk.Button(frm, text="Quit", command=root.destroy).grid(column=j, row=i+1)
+
+    return root
+
 def print_board(board):
     for line in board:
         for value in line:
             print(f"{value} ", end="")
         print()
 
+# ---- Variables ----
+board = create_board(BOARD_WIDTH, BOARD_HEIGHT)
+pairs = [i for i in range(NB_PAIRS)] * 2
+
 # ---- Tests ----
 board = fill_board(board, pairs)
 print_board(board)
 
-root = Tk()
-frm = ttk.Frame(root, padding=10)
-frm.grid()
-ttk.Label(frm, text="Hello World!").grid(column=0, row=0)
-ttk.Button(frm, text="Quit", command=root.destroy).grid(column=1, row=0)
+root = create_board_view(board)
 root.mainloop()
