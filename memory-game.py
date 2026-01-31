@@ -2,6 +2,7 @@
 import random
 from tkinter import *
 from tkinter import ttk
+import time
 
 # ---- Constants ----
 # Board
@@ -24,12 +25,36 @@ class MemoryGame:
         self.root.mainloop()
 
     # -- Button functions --
+    def update_buttons(self, x, y, btn):
+        if self.last_revealed.cget('text') == btn.cget('text'):
+            # TODO: ajouter un temps d'attente ici (pour animation)
+            self.last_revealed.destroy()
+            self.last_revealed = None
+            btn.destroy()
+            return
+        
+        self.last_revealed.config(text="?")
+        self.last_revealed = None
+        btn.config(text="?")
+        # TODO: add check of length of "buttons" to check for victory --> also add a counter to show the number of pairs already found
+
     def click_tile(self, x, y):
         btn = self.buttons[(x, y)]
         print(f"Clicked : {x}, {y} -> {self.board[x][y]}")
-        # TODO: check if the tile is already revealed
+        # Check if the button is already revealed
+        # TODO: ajouter un check pour savoir si un click est en cours (car le after n'est pas bloquant donc on peut enchainer les clics)
+        if btn.cget('text') != "?":
+            return
+        # Reaveal tile
         btn.config(text=str(self.board[x][y]))
-        # TODO: check for matches
+        if not self.last_revealed:
+            print("no revealed tiles")
+            self.last_revealed = btn
+            return      # No tiles currently revealed, nothing more to do
+        
+        self.root.after(500, lambda: self.update_buttons(x, y, btn))       # show the value for at least one second
+        
+    
     
     # -- Board functions --
     # View
